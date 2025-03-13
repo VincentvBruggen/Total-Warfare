@@ -6,13 +6,13 @@ using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
-using Unity.VisualScripting;
 
 namespace TotalWarfare
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
-        public static GameManager instance;
+        [SerializeField] GameObject _playerPrefab;
+
         #region Photon Callbacks
 
         /// <summary>
@@ -47,6 +47,14 @@ namespace TotalWarfare
             }
         }
 
+        public override void OnJoinedRoom()
+        {
+            if (!PhotonNetwork.IsConnectedAndReady)
+                return;
+            
+            PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity, 0);
+        }
+
         #endregion
 
         #region Public Methods
@@ -60,6 +68,14 @@ namespace TotalWarfare
         
         #region Private Methods
 
+        private void Start()
+        {
+            if (!PhotonNetwork.IsConnectedAndReady)
+                return;
+            
+            PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity, 0);
+        }
+        
         private void LoadArena()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -67,16 +83,22 @@ namespace TotalWarfare
                 Debug.LogError("Not able to load because you are not Master Client");
                 return;
             }
-            PhotonNetwork.LoadLevel(1);
-            PhotonNetwork.Instantiate("TestPlayer", Vector3.zero, Quaternion.identity, 0);
+            //PhotonNetwork.LoadLevel(1);
+            // PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity, 0);
         }
         
         #endregion
 
+#if DEVELOPMENT_BUILD
         private void OnGUI()
         {
-            GUI.TextField(new Rect(0, 0, 225, 25), "Room Name: " + PhotonNetwork.CurrentRoom.Name);
-            GUI.TextField(new Rect(0, 30, 200, 25), "Player Count: " + PhotonNetwork.PlayerList.Length);
+            if (PhotonNetwork.CurrentRoom != null)
+            {
+                GUI.TextField(new Rect(0, 0, 225, 25), "Room Name: " + PhotonNetwork.CurrentRoom.Name);
+                GUI.TextField(new Rect(0, 30, 200, 25), "Player Count: " + PhotonNetwork.PlayerList.Length);
+                GUI.TextField(new Rect(0, 50, 200, 25), "IsConnectedToNetwork: " + PhotonNetwork.IsConnected);
+            }
         }
+#endif
     }
 }
