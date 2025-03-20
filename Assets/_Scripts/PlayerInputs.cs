@@ -92,13 +92,31 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             ""id"": ""d44426ca-19ac-471c-9751-0b3de49972df"",
             ""actions"": [
                 {
-                    ""name"": ""MouseClick"",
+                    ""name"": ""Select"",
                     ""type"": ""Button"",
                     ""id"": ""f18642d6-fa85-4d19-981d-0a252670e3a9"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ShiftClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""a26223a9-1fb7-44fa-a09b-268c3f88760a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SendOrder"",
+                    ""type"": ""Button"",
+                    ""id"": ""27886e52-bc89-4cb1-92ab-6b4653ba9c92"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -109,7 +127,51 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MouseClick"",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""ea8f09db-cc3a-400f-ba2a-828199f6316c"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftClick"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""1350c38f-3d40-4050-8ed8-7f3ade882b43"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""6b2c3f69-bbd8-46b2-ab95-c92542046f8d"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d8ddbd27-46e0-4f3d-8984-f43af85a2cfb"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SendOrder"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -137,7 +199,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
 }");
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
-        m_Gameplay_MouseClick = m_Gameplay.FindAction("MouseClick", throwIfNotFound: true);
+        m_Gameplay_Select = m_Gameplay.FindAction("Select", throwIfNotFound: true);
+        m_Gameplay_ShiftClick = m_Gameplay.FindAction("ShiftClick", throwIfNotFound: true);
+        m_Gameplay_SendOrder = m_Gameplay.FindAction("SendOrder", throwIfNotFound: true);
     }
 
     ~@PlayerInputs()
@@ -218,7 +282,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     // Gameplay
     private readonly InputActionMap m_Gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
-    private readonly InputAction m_Gameplay_MouseClick;
+    private readonly InputAction m_Gameplay_Select;
+    private readonly InputAction m_Gameplay_ShiftClick;
+    private readonly InputAction m_Gameplay_SendOrder;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -231,9 +297,17 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// </summary>
         public GameplayActions(@PlayerInputs wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Gameplay/MouseClick".
+        /// Provides access to the underlying input action "Gameplay/Select".
         /// </summary>
-        public InputAction @MouseClick => m_Wrapper.m_Gameplay_MouseClick;
+        public InputAction @Select => m_Wrapper.m_Gameplay_Select;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ShiftClick".
+        /// </summary>
+        public InputAction @ShiftClick => m_Wrapper.m_Gameplay_ShiftClick;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/SendOrder".
+        /// </summary>
+        public InputAction @SendOrder => m_Wrapper.m_Gameplay_SendOrder;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -260,9 +334,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_GameplayActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_GameplayActionsCallbackInterfaces.Add(instance);
-            @MouseClick.started += instance.OnMouseClick;
-            @MouseClick.performed += instance.OnMouseClick;
-            @MouseClick.canceled += instance.OnMouseClick;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+            @ShiftClick.started += instance.OnShiftClick;
+            @ShiftClick.performed += instance.OnShiftClick;
+            @ShiftClick.canceled += instance.OnShiftClick;
+            @SendOrder.started += instance.OnSendOrder;
+            @SendOrder.performed += instance.OnSendOrder;
+            @SendOrder.canceled += instance.OnSendOrder;
         }
 
         /// <summary>
@@ -274,9 +354,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// <seealso cref="GameplayActions" />
         private void UnregisterCallbacks(IGameplayActions instance)
         {
-            @MouseClick.started -= instance.OnMouseClick;
-            @MouseClick.performed -= instance.OnMouseClick;
-            @MouseClick.canceled -= instance.OnMouseClick;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+            @ShiftClick.started -= instance.OnShiftClick;
+            @ShiftClick.performed -= instance.OnShiftClick;
+            @ShiftClick.canceled -= instance.OnShiftClick;
+            @SendOrder.started -= instance.OnSendOrder;
+            @SendOrder.performed -= instance.OnSendOrder;
+            @SendOrder.canceled -= instance.OnSendOrder;
         }
 
         /// <summary>
@@ -331,11 +417,25 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     public interface IGameplayActions
     {
         /// <summary>
-        /// Method invoked when associated input action "MouseClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Select" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnMouseClick(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ShiftClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShiftClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SendOrder" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSendOrder(InputAction.CallbackContext context);
     }
 }

@@ -6,12 +6,13 @@ using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.Serialization;
 
 namespace TotalWarfare
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
-        [SerializeField] GameObject _playerPrefab;
+        [SerializeField] GameObject[] playerPrefabs;
 
         #region Photon Callbacks
 
@@ -51,8 +52,11 @@ namespace TotalWarfare
         {
             if (!PhotonNetwork.IsConnectedAndReady)
                 return;
-            
-            PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity, 0);
+
+            for (int i = 0; i < this.playerPrefabs.Length; i++)
+            {
+                PhotonNetwork.Instantiate(this.playerPrefabs[i].name, new Vector3(0, 5, 0), Quaternion.identity);
+            }
         }
 
         #endregion
@@ -68,12 +72,20 @@ namespace TotalWarfare
         
         #region Private Methods
 
+        private void Awake()
+        {
+
+        }
         private void Start()
         {
+
             if (!PhotonNetwork.IsConnectedAndReady)
                 return;
-            
-            PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity, 0);
+
+            for (int i = 0; i < this.playerPrefabs.Length; i++)
+            {
+                PhotonNetwork.Instantiate(this.playerPrefabs[i].name, new Vector3(0, 5, 0), Quaternion.identity);
+            }
         }
         
         private void LoadArena()
@@ -89,7 +101,7 @@ namespace TotalWarfare
         
         #endregion
 
-#if DEVELOPMENT_BUILD
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
         private void OnGUI()
         {
             if (PhotonNetwork.CurrentRoom != null)
