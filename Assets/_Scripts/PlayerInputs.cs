@@ -101,16 +101,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""ShiftClick"",
-                    ""type"": ""Button"",
-                    ""id"": ""a26223a9-1fb7-44fa-a09b-268c3f88760a"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""SendOrder"",
+                    ""name"": ""OverrideOrder"",
                     ""type"": ""Button"",
                     ""id"": ""27886e52-bc89-4cb1-92ab-6b4653ba9c92"",
                     ""expectedControlType"": """",
@@ -132,46 +123,13 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""One Modifier"",
-                    ""id"": ""ea8f09db-cc3a-400f-ba2a-828199f6316c"",
-                    ""path"": ""OneModifier"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ShiftClick"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""modifier"",
-                    ""id"": ""1350c38f-3d40-4050-8ed8-7f3ade882b43"",
-                    ""path"": ""<Keyboard>/shift"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ShiftClick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""binding"",
-                    ""id"": ""6b2c3f69-bbd8-46b2-ab95-c92542046f8d"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ShiftClick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
                     ""id"": ""d8ddbd27-46e0-4f3d-8984-f43af85a2cfb"",
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SendOrder"",
+                    ""action"": ""OverrideOrder"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -200,8 +158,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Select = m_Gameplay.FindAction("Select", throwIfNotFound: true);
-        m_Gameplay_ShiftClick = m_Gameplay.FindAction("ShiftClick", throwIfNotFound: true);
-        m_Gameplay_SendOrder = m_Gameplay.FindAction("SendOrder", throwIfNotFound: true);
+        m_Gameplay_OverrideOrder = m_Gameplay.FindAction("OverrideOrder", throwIfNotFound: true);
     }
 
     ~@PlayerInputs()
@@ -283,8 +240,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
     private readonly InputAction m_Gameplay_Select;
-    private readonly InputAction m_Gameplay_ShiftClick;
-    private readonly InputAction m_Gameplay_SendOrder;
+    private readonly InputAction m_Gameplay_OverrideOrder;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -301,13 +257,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Select => m_Wrapper.m_Gameplay_Select;
         /// <summary>
-        /// Provides access to the underlying input action "Gameplay/ShiftClick".
+        /// Provides access to the underlying input action "Gameplay/OverrideOrder".
         /// </summary>
-        public InputAction @ShiftClick => m_Wrapper.m_Gameplay_ShiftClick;
-        /// <summary>
-        /// Provides access to the underlying input action "Gameplay/SendOrder".
-        /// </summary>
-        public InputAction @SendOrder => m_Wrapper.m_Gameplay_SendOrder;
+        public InputAction @OverrideOrder => m_Wrapper.m_Gameplay_OverrideOrder;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -337,12 +289,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Select.started += instance.OnSelect;
             @Select.performed += instance.OnSelect;
             @Select.canceled += instance.OnSelect;
-            @ShiftClick.started += instance.OnShiftClick;
-            @ShiftClick.performed += instance.OnShiftClick;
-            @ShiftClick.canceled += instance.OnShiftClick;
-            @SendOrder.started += instance.OnSendOrder;
-            @SendOrder.performed += instance.OnSendOrder;
-            @SendOrder.canceled += instance.OnSendOrder;
+            @OverrideOrder.started += instance.OnOverrideOrder;
+            @OverrideOrder.performed += instance.OnOverrideOrder;
+            @OverrideOrder.canceled += instance.OnOverrideOrder;
         }
 
         /// <summary>
@@ -357,12 +306,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Select.started -= instance.OnSelect;
             @Select.performed -= instance.OnSelect;
             @Select.canceled -= instance.OnSelect;
-            @ShiftClick.started -= instance.OnShiftClick;
-            @ShiftClick.performed -= instance.OnShiftClick;
-            @ShiftClick.canceled -= instance.OnShiftClick;
-            @SendOrder.started -= instance.OnSendOrder;
-            @SendOrder.performed -= instance.OnSendOrder;
-            @SendOrder.canceled -= instance.OnSendOrder;
+            @OverrideOrder.started -= instance.OnOverrideOrder;
+            @OverrideOrder.performed -= instance.OnOverrideOrder;
+            @OverrideOrder.canceled -= instance.OnOverrideOrder;
         }
 
         /// <summary>
@@ -424,18 +370,11 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSelect(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "ShiftClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "OverrideOrder" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnShiftClick(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "SendOrder" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSendOrder(InputAction.CallbackContext context);
+        void OnOverrideOrder(InputAction.CallbackContext context);
     }
 }

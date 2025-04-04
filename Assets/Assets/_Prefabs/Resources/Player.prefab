@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 2763409716313070229}
   - component: {fileID: 8318855962497169355}
   - component: {fileID: 8745917272194034987}
+  - component: {fileID: -8449402484686977026}
+  - component: {fileID: 15333952798804002}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -68,5 +70,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentOrder: {fileID: 0}
+  currentBuilding: {fileID: 0}
+  buildingName: 
   targetPosition: {x: 0, y: 0, z: 0}
   standardOrder: MoveOrder
+  selectedUnits: []
+  currentGhostColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &-8449402484686977026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346671068375997489}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5362508e9909c0744b64c190cb17253f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  status: 1
+  targetPosition: {x: 0, y: 0, z: 0}
+  targetPositionIndex: 0
+--- !u!114 &15333952798804002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346671068375997489}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 887036d670970fe41aa12438a3fb20d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  status: 1
+  targetPosition: {x: 0, y: 0, z: 0}

@@ -1,3 +1,4 @@
+using System;
 using TotalWarfare;
 using Unity.Behavior;
 using UnityEngine;
@@ -5,13 +6,8 @@ using UnityEngine.AI;
 
 public abstract class OrderBase : MonoBehaviour
 {
-    public enum Status
-    {
-        Running,
-        Success,
-        Failure
-    }
-    public Status status = Status.Running;
+
+    public Node.Status status = Node.Status.Running;
     public Vector3 targetPosition;
     
     protected NavMeshAgent agent;
@@ -19,18 +15,34 @@ public abstract class OrderBase : MonoBehaviour
     protected BaseUnit baseUnit;
     protected virtual void Start()
     {
+        
+    }
+
+    protected virtual void OnEnable()
+    {
+        status = Node.Status.Running;
         agent = GetComponent<NavMeshAgent>();
         behaviorAgent = GetComponent<BehaviorGraphAgent>();
         baseUnit = GetComponent<BaseUnit>();
-        this.targetPosition = this.baseUnit.orderTargetPositions[0];
-        this.baseUnit.orderTargetPositions.RemoveAt(0);
+        targetPosition = baseUnit.orderTargetPositions[0];
+    }
+    protected virtual void OnDisable()
+    {
+        status = Node.Status.Uninitialized;
     }
 
     protected virtual void Update()
     {
-        if (status == Status.Success)
+        if (status == Node.Status.Success)
         {
-            this.baseUnit.RemoveOrder(this);
+            baseUnit.orderTargetPositions.RemoveAt(0);
+            RemoveOrder();
         }
+    }
+
+    public void RemoveOrder()
+    {
+        baseUnit.RemoveOrder(this);
+        //Destroy(this);
     }
 }

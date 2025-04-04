@@ -19,12 +19,15 @@ public partial class ExecuteOrderAction : Action
     protected override Status OnStart()
     {
         _unit = Unit.Value;
-        _order = Order.Value;
         // this.Order.OnValueChanged -= OrderOnOnValueChanged;
         // this.Order.OnValueChanged += OrderOnOnValueChanged;
+
+        if (Order.Value != null)
+        {
+            _order = (OrderBase)_unit.GetComponent(Order.Value.GetType());
+            _order.enabled = true;
+        }
         
-        _unit.AddComponent(_order.GetType());
-        _order = _unit.GetComponent<OrderBase>();
         return Status.Running;
     }
     // private void OrderOnOnValueChanged()
@@ -38,11 +41,7 @@ public partial class ExecuteOrderAction : Action
 
     protected override Status OnUpdate()
     {
-        if(_order.status == OrderBase.Status.Success)
-        {
-            return Status.Success;
-        }
-        return Status.Running;
+        return _order.status;
     }
 
     protected override void OnEnd()

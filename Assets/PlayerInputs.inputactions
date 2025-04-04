@@ -15,16 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "ShiftClick",
-                    "type": "Button",
-                    "id": "a26223a9-1fb7-44fa-a09b-268c3f88760a",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "SendOrder",
+                    "name": "OverrideOrder",
                     "type": "Button",
                     "id": "27886e52-bc89-4cb1-92ab-6b4653ba9c92",
                     "expectedControlType": "",
@@ -46,46 +37,13 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "One Modifier",
-                    "id": "ea8f09db-cc3a-400f-ba2a-828199f6316c",
-                    "path": "OneModifier",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ShiftClick",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "modifier",
-                    "id": "1350c38f-3d40-4050-8ed8-7f3ade882b43",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ShiftClick",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "binding",
-                    "id": "6b2c3f69-bbd8-46b2-ab95-c92542046f8d",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ShiftClick",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
                     "name": "",
                     "id": "d8ddbd27-46e0-4f3d-8984-f43af85a2cfb",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SendOrder",
+                    "action": "OverrideOrder",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
