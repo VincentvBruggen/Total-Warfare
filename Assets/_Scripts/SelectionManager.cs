@@ -129,7 +129,7 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
             ISelectable selectable = hit.collider.GetComponent<ISelectable>();
             PhotonView selectablePhotonView = hit.collider.GetComponent<PhotonView>();
 
-            if (selectable == null || selectablePhotonView == null || !selectablePhotonView.IsMine)
+            if ((selectable == null || selectablePhotonView == null || !selectablePhotonView.IsMine ) && !Keyboard.current.shiftKey.isPressed)
             {
                 if(EventSystem.current.IsPointerOverGameObject()){return;}
                     
@@ -158,7 +158,7 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
         
         // 1. geen order -> move order
         // 2. move order -> move order
-        // 3. build order -> 
+        // 3. build order ->
         
                     
         Vector3 position = Mouse.current.position.ReadValue();
@@ -172,6 +172,7 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
                 
                 if (currentOrder == GetComponent<BuildOrder>())
                 {
+                    PhotonNetwork.Destroy(currentBuilding);
                     currentOrder = null;
                 }
                 
@@ -206,7 +207,7 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
 
             unit.behaviorAgent.Graph.Restart();
         }
-        unit.SendOrder(order, targetPosition);
+        unit.SendOrder(order, targetPosition); 
         unit.behaviorAgent.BlackboardReference.SetVariableValue("CurrentOrder", unit.ordersList[0]);
     }
 
