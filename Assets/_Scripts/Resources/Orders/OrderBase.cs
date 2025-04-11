@@ -6,13 +6,18 @@ using UnityEngine.AI;
 
 public abstract class OrderBase : MonoBehaviour
 {
-
+    public UnitState orderState;
     public Node.Status status = Node.Status.Running;
     public Vector3 targetPosition;
     
     protected NavMeshAgent agent;
     protected BehaviorGraphAgent behaviorAgent;
     protected BaseUnit baseUnit;
+
+    protected virtual void Awake()
+    {
+        
+    }
     protected virtual void Start()
     {
         
@@ -25,6 +30,9 @@ public abstract class OrderBase : MonoBehaviour
         behaviorAgent = GetComponent<BehaviorGraphAgent>();
         baseUnit = GetComponent<BaseUnit>();
         targetPosition = baseUnit.orderTargetPositions[0];
+        
+        agent.isStopped = false;
+        agent.enabled = true;
     }
     protected virtual void OnDisable()
     {
@@ -33,11 +41,7 @@ public abstract class OrderBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (status == Node.Status.Success)
-        {
-            baseUnit.orderTargetPositions.RemoveAt(0);
-            RemoveOrder();
-        }
+
     }
 
     public void RemoveOrder()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
@@ -53,18 +54,16 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
     {
         if (selectedUnits.Count > 0)
         {
-            ConstructionUnit constructionUnit = null;
-            Commander commander = null;
+            BaseUnit baseUnit = null;
 
             foreach (GameObject unit in selectedUnits)
             {
-                constructionUnit = unit.GetComponent<ConstructionUnit>();
-                commander = unit.GetComponent<Commander>();
+                baseUnit = unit.GetComponent<BaseUnit>();
 
-                if (constructionUnit != null || commander != null) { break; }
+                if (baseUnit.type == BaseUnit.UnitType.Builder || baseUnit.type == BaseUnit.UnitType.Commander) { break; }
             }
 
-            if (constructionUnit != null || commander != null)
+            if (baseUnit.type == BaseUnit.UnitType.Builder || baseUnit.type == BaseUnit.UnitType.Commander)
             {
                 UIManager.Instance.constructionPanel.SetActive(true);
             }
@@ -88,22 +87,28 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
         
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            currentBuilding.GetComponentInChildren<Collider>().enabled = false;
             currentBuilding.transform.position = hit.point;
 
             if (!hit.collider.CompareTag("Terrain"))
             {
                 buildingIsPlacable = false;
-                
-                currentBuilding.GetComponentInChildren<MeshRenderer>().material.SetColor("_FresnelColor", Color.red);
             }
             else
             {
                 buildingIsPlacable = true;
-                currentBuilding.GetComponentInChildren<MeshRenderer>().material.SetColor("_FresnelColor", currentGhostColor);
             }
         }
+
+        if (!buildingIsPlacable)
+        {
+            currentBuilding.GetComponentInChildren<MeshRenderer>().material.SetColor("_FresnelColor", Color.red);
+        }
+        else
+        {
+            currentBuilding.GetComponentInChildren<MeshRenderer>().material.SetColor("_FresnelColor", currentGhostColor);
+        }
     }
+    
 
     public void OnSelect(InputAction.CallbackContext context)
     {
@@ -117,9 +122,14 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
                 targetPosition = currentBuilding.transform.position;
                 SendingOrder(currentOrder, unit);
             }
-            
-            currentBuilding.GetComponentInChildren<Collider>().enabled = true;
+            currentBuilding.GetComponentInChildren<Collider>().isTrigger = false;
+            currentBuilding.transform.GetChild(0).gameObject.layer = LayerMask.NameToLayer("Default");
             currentBuilding = null;
+            
+            // if(!Keyboard.current.shiftKey.IsPressed())
+                
+            
+            return;
         }
 
         Vector3 position = Mouse.current.position.ReadValue();
@@ -129,7 +139,7 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
             ISelectable selectable = hit.collider.GetComponent<ISelectable>();
             PhotonView selectablePhotonView = hit.collider.GetComponent<PhotonView>();
 
-            if ((selectable == null || selectablePhotonView == null || !selectablePhotonView.IsMine ) && !Keyboard.current.shiftKey.isPressed)
+            if (selectable == null || selectablePhotonView == null || !selectablePhotonView.IsMine)
             {
                 if(EventSystem.current.IsPointerOverGameObject()){return;}
                     
@@ -147,6 +157,11 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
                 selectedUnits.Add(selectedUnit);
                 selectable.OnSelect(gameObject);
             }
+            else
+            {
+                selectedUnits.Remove(selectedUnit);
+                selectable.OnDeselect(gameObject);
+            }
         }
     }
 
@@ -161,6 +176,15 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
         // 3. build order ->
         
                     
+        if (currentOrder == GetComponent<BuildOrder>())
+        {
+            if (currentBuilding != null)
+            {
+                PhotonNetwork.Destroy(currentBuilding);
+            }
+            currentOrder = null;
+            return;
+        }
         Vector3 position = Mouse.current.position.ReadValue();
         Ray ray = Camera.main.ScreenPointToRay(position);
         if (Physics.Raycast(ray, out RaycastHit hit))
@@ -170,11 +194,6 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
             {
                 BaseUnit unit = selectedUnit.GetComponent<BaseUnit>();
                 
-                if (currentOrder == GetComponent<BuildOrder>())
-                {
-                    PhotonNetwork.Destroy(currentBuilding);
-                    currentOrder = null;
-                }
                 
                 if (currentOrder != null)
                 {
@@ -201,14 +220,24 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
 
             if (unit.ordersList.Count > 0)
             {
+                unit.ordersList[0].status = Node.Status.Success;
+                unit.ordersList[0].enabled = false;
                 unit.ordersList.Clear();
             }
             unit.orderTargetPositions.Clear();
-
-            unit.behaviorAgent.Graph.Restart();
+            
+            unit.state = UnitState.Idle;
+        }
+        if (unit.ordersList.Count == 0)
+        {
+            foreach (OrderBase script in unit.GetComponents<OrderBase>())
+            {
+                script.status = Node.Status.Success;
+            }
         }
         unit.SendOrder(order, targetPosition); 
-        unit.behaviorAgent.BlackboardReference.SetVariableValue("CurrentOrder", unit.ordersList[0]);
+        
+        // unit.behaviorAgent.BlackboardReference.SetVariableValue("CurrentOrder", unit.ordersList[0]);
     }
 
     private void BuildOrder(string building)

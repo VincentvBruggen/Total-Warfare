@@ -2,13 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Unity.Behavior;
 
 public class BuildOrder : OrderBase
 {
     ConstructionUnit constructionUnit;
     Commander commander;
 
+    private float buildSpeed = 0;
+    private float buildRange = 0;
+
     private bool isBuilding = false;
+    
+    protected override void Awake()
+    {
+        orderState = UnitState.Build;
+    }
     protected override void Start()
     {
         base.Start();
@@ -22,6 +31,13 @@ public class BuildOrder : OrderBase
         if(constructionUnit == null)
         {
             commander = baseUnit.GetComponent<Commander>();
+            buildSpeed = commander.buildSpeed;
+            buildRange = commander.buildRange;
+        }
+        else
+        {
+            buildSpeed = constructionUnit.buildSpeed;
+            buildRange = constructionUnit.buildRange;
         }
         
         agent.SetDestination(targetPosition);
@@ -30,6 +46,9 @@ public class BuildOrder : OrderBase
     protected override void OnDisable()
     {
         base.OnDisable();
+        
+        isBuilding = false;
+        agent.isStopped = false;
     }
 
     protected override void Update()
@@ -59,18 +78,23 @@ public class BuildOrder : OrderBase
 
     private IEnumerator Build()
     {
-        // Debug.Log("Building");
+        isBuilding = true;
         
+        Debug.DrawRay(transform.position, targetPosition-transform.position, Color.red);
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.position - targetPosition, out hit))
+        if (Physics.Raycast(transform.position, targetPosition - transform.position, out hit, buildRange + 0.75f))
         {
-            BuildingBase buildingBase = hit.collider.GetComponent<BuildingBase>();
+            BuildingBase buildingBase = hit.transform.parent.GetComponent<BuildingBase>();
             if (buildingBase != null)
             {
-                // while (buildingBase.)
-                // {
-                //     
-                // }
+                Debug.Log("Building: " + buildingBase.name);
+                while (buildingBase.buildProgress < buildingBase.metalCost)
+                {
+                    buildingBase.buildProgress += buildSpeed * Time.deltaTime;
+                    yield return new WaitForEndOfFrame();
+                }
+
+                status = Node.Status.Success;
             }
         }
         

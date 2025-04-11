@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: -6800972468128464615}
   - component: {fileID: -8035730301625733432}
   - component: {fileID: 1255757404727949628}
-  - component: {fileID: 406937382341002931}
   - component: {fileID: -4245466226628561155}
   - component: {fileID: 454068595572495867}
   - component: {fileID: -3365334007818934725}
@@ -181,34 +180,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 1
---- !u!114 &406937382341002931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7130448604612746795}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Graph: {fileID: -1832537689397538369, guid: 93a435b4187a10148b02089f7cf82119, type: 2}
-  m_BlackboardVariableOverridesList:
-  - rid: 6954507143255949433
-  m_IsInitialised: 0
-  m_IsStarted: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 6954507143255949433
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1
-          m_Value1: 0
-        Name: Self
-        m_Value: {fileID: 7130448604612746795}
 --- !u!114 &-4245466226628561155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,7 +192,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a01eddae73076c944b76850dee97d902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  behaviorAgent: {fileID: 406937382341002931}
+  type: 0
+  state: 0
+  behaviorAgent: {fileID: 0}
   navMeshAgent: {fileID: 1255757404727949628}
   manager: {fileID: 0}
   health: 0
@@ -241,7 +214,7 @@ MonoBehaviour:
   attackRange: 0
   building: {fileID: 0}
   buildRange: 5
-  buildSpeed: 0
+  buildSpeed: 5
 --- !u!114 &454068595572495867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,9 +227,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5362508e9909c0744b64c190cb17253f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderState: 1
   status: 1
   targetPosition: {x: 0, y: 0, z: 0}
-  targetPositionIndex: 0
+  groupCount: 0
 --- !u!114 &-3365334007818934725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,6 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 887036d670970fe41aa12438a3fb20d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderState: 4
   status: 1
   targetPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &7179432611407477056
