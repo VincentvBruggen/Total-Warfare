@@ -88,9 +88,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5362508e9909c0744b64c190cb17253f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderState: 1
   status: 1
   targetPosition: {x: 0, y: 0, z: 0}
-  targetPositionIndex: 0
+  groupCount: 0
 --- !u!114 &15333952798804002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,5 +104,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 887036d670970fe41aa12438a3fb20d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderState: 4
   status: 1
   targetPosition: {x: 0, y: 0, z: 0}

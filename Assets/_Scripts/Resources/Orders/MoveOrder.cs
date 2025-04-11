@@ -1,23 +1,32 @@
 using Unity.Behavior;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 public class MoveOrder : OrderBase
 {
-    public int targetPositionIndex;
+    [FormerlySerializedAs("targetPositionIndex")]
+    public int groupCount;
+    
+    protected override void Awake()
+    {
+        orderState = UnitState.Move;
+    }
     protected override void Start()
     {
         base.Start();
+        
         
     }
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        
         agent.isStopped = false;
+
+        groupCount = baseUnit.manager.selectedUnits.Count;
         
-        targetPositionIndex = baseUnit.manager.selectedUnits.IndexOf(baseUnit.gameObject);
+        targetPosition = targetPosition + (Random.insideUnitSphere * groupCount * 0.5f);
         agent.SetDestination(targetPosition);
     }
 
@@ -30,10 +39,12 @@ public class MoveOrder : OrderBase
         base.Update();
         
         // Debug.Log(Vector3.Distance(transform.position, targetPosition));
-        if (Vector3.Distance(transform.position, targetPosition) < 1.25f + targetPositionIndex)
+        if (Vector3.Distance(transform.position, targetPosition) < 1.5f || agent.destination == null)
         {
             status = Node.Status.Success;
             agent.isStopped = true;
+            
+            print("move complete");
         }
     }
 }
