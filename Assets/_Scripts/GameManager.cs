@@ -12,7 +12,14 @@ namespace TotalWarfare
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
+        public static GameManager instance;
+        
+        [SerializeField] private GameObject waitinForPlayers;
+        public bool isGameStarted = false;
         [SerializeField] GameObject[] playerPrefabs;
+        [SerializeField]
+        private Transform[] spawns;
+        private int player1;
 
         #region Photon Callbacks
 
@@ -52,11 +59,14 @@ namespace TotalWarfare
         {
             if (!PhotonNetwork.IsConnectedAndReady)
                 return;
-
+        
+            PhotonNetwork.Instantiate("Camera", new Vector3(0, 40, 0), Quaternion.Euler(75, 180, 0));
             for (int i = 0; i < this.playerPrefabs.Length; i++)
             {
-                PhotonNetwork.Instantiate(this.playerPrefabs[i].name, new Vector3(0, 5, 0), Quaternion.identity);
+                PhotonNetwork.Instantiate(this.playerPrefabs[i].name, spawns[PhotonNetwork.CurrentRoom.PlayerCount-1].position, Quaternion.identity);
             }
+            
+            Camera.main.transform.parent.eulerAngles += Vector3.up * 180;
         }
 
         #endregion
@@ -74,20 +84,33 @@ namespace TotalWarfare
 
         private void Awake()
         {
-
+            instance = this;
         }
         private void Start()
         {
 
             if (!PhotonNetwork.IsConnectedAndReady)
                 return;
-
+            PhotonNetwork.Instantiate("Camera", new Vector3(0, 40, 0), Quaternion.Euler(75, 0, 0));
             for (int i = 0; i < this.playerPrefabs.Length; i++)
             {
-                PhotonNetwork.Instantiate(this.playerPrefabs[i].name, new Vector3(0, 5, 0), Quaternion.identity);
+                GameObject go = PhotonNetwork.Instantiate(this.playerPrefabs[i].name, spawns[PhotonNetwork.CurrentRoom.PlayerCount-1].position, Quaternion.identity);
+                if (i == 0)
+                {
+                    player1 = go.GetComponent<PhotonView>().ViewID;
+                }
             }
         }
-        
+
+        private void Update()
+        {
+            if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            {
+                isGameStarted = true;
+                waitinForPlayers.SetActive(false);
+            }
+        }
+
         private void LoadArena()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -98,6 +121,14 @@ namespace TotalWarfare
             //PhotonNetwork.LoadLevel(1);
             // PhotonNetwork.Instantiate(_playerPrefab.name, Vector3.zero, Quaternion.identity, 0);
         }
+
+        // IEnumerator GameStart()
+        // {
+        //     for (int i = 0; i < this.playerPrefabs.Length; i++)
+        //     {
+        //         PhotonNetwork.Instantiate(this.playerPrefabs[i].name, spawns[PhotonNetwork.CurrentRoom.PlayerCount-1].position, Quaternion.identity);
+        //     }
+        // }
         
         #endregion
 

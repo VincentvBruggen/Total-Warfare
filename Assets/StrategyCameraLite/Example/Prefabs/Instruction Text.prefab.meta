@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 439025a97497167459745aeb18965ee1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179482
+  packageName: Strategy Camera Lite
+  packageVersion: 1.0.1
+  assetPath: Assets/StrategyCameraLite/Example/Prefabs/Instruction Text.prefab
+  uploadId: 708095

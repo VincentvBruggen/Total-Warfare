@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 14cd42e240c359841820c078fee28802
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179482
+  packageName: Strategy Camera Lite
+  packageVersion: 1.0.1
+  assetPath: Assets/StrategyCameraLite/Scripts/Editor/StrategyCameraEditor.cs
+  uploadId: 708095

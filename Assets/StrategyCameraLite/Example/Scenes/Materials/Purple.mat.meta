@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ad5f3d79cec230f4e95448644556850a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179482
+  packageName: Strategy Camera Lite
+  packageVersion: 1.0.1
+  assetPath: Assets/StrategyCameraLite/Example/Scenes/Materials/Purple.mat
+  uploadId: 708095

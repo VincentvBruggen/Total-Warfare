@@ -16,9 +16,10 @@ GameObject:
   - component: {fileID: -8035730301625733432}
   - component: {fileID: 1255757404727949628}
   - component: {fileID: -4245466226628561155}
+  - component: {fileID: -7855730761303895416}
   - component: {fileID: 454068595572495867}
   - component: {fileID: -3365334007818934725}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TestSelectable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194,8 +195,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   state: 0
+  fogRevealer:
+    revealerTransform: {fileID: 5273682029749863158}
+    sightRange: 0
+    updateOnlyOnMove: 0
+    lastSeenAt: {x: 0, y: 0}
   behaviorAgent: {fileID: 0}
   navMeshAgent: {fileID: 1255757404727949628}
+  fogAgent: {fileID: -7855730761303895416}
   manager: {fileID: 0}
   health: 0
   observationRadius: 0
@@ -212,9 +219,27 @@ MonoBehaviour:
   icon: {fileID: 7179432611407477056}
   damage: 0
   attackRange: 0
+  attackSpeed: 0
+  shootPoint: {fileID: 0}
+  projectilePrefab: {fileID: 0}
   building: {fileID: 0}
   buildRange: 5
   buildSpeed: 5
+--- !u!114 &-7855730761303895416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7130448604612746795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 985add12ee4836e40b7241671b1d892c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fogWar: {fileID: 0}
+  visibility: 0
+  additionalRadius: 1
 --- !u!114 &454068595572495867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,7 +282,8 @@ GameObject:
   - component: {fileID: 107677729363426216}
   - component: {fileID: 8646990936374274056}
   - component: {fileID: 1726404901638399345}
-  m_Layer: 0
+  - component: {fileID: 8957219840122532527}
+  m_Layer: 7
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -422,6 +448,18 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 8646990936374274056}
   m_maskType: 0
+--- !u!114 &8957219840122532527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7179432611407477056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a57ae6db8167ef4da26160c4d22f4b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7230169259452250096
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,7 +471,7 @@ GameObject:
   - component: {fileID: 8342433908525695972}
   - component: {fileID: 6781058836063527697}
   - component: {fileID: 3867210221196338246}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SelectionVisual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -518,7 +556,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5048452303589598255}
   - component: {fileID: 5879903416530744333}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}

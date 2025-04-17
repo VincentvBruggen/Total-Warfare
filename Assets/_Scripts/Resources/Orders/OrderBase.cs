@@ -41,7 +41,10 @@ public abstract class OrderBase : MonoBehaviour
 
     protected virtual void Update()
     {
-
+        if (status == Node.Status.Success)
+        {
+            RemoveOrder();
+        }
     }
 
     public void RemoveOrder()
