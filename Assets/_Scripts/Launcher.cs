@@ -85,6 +85,11 @@ namespace TotalWarfare
             }
         }
 
+        public void Quit()
+        {
+            Application.Quit();
+        }
+
     #endregion
 
     #region MonoBehaviourPunCallbacks Callbacks

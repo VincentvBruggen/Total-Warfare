@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using FischlWorks_FogWar;
 using NUnit.Framework;
 using Unity.Behavior;
 using UnityEngine;
@@ -6,6 +8,7 @@ using UnityEngine.AI;
 
 using Photon.Pun;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public enum UnitState
   {
@@ -27,8 +30,10 @@ public abstract class BaseUnit : MonoBehaviourPun, ISelectable, IDestroyable
     public UnitType type;
     public UnitState state;
     
+    [SerializeField] protected csFogWar.FogRevealer fogRevealer;
     public BehaviorGraphAgent behaviorAgent;
     public NavMeshAgent navMeshAgent;
+    public csFogVisibilityAgent fogAgent;
     public SelectionManager manager;
 
     public float health;
@@ -47,8 +52,25 @@ public abstract class BaseUnit : MonoBehaviourPun, ISelectable, IDestroyable
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private GameObject icon;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    protected void Awake()
+    {
+        fogRevealer = new csFogWar.FogRevealer(transform, (int)observationRadius, false);
+    }
+
     protected virtual void Start()
     {
+        navMeshAgent.speed = moveSpeed;
+        navMeshAgent.angularSpeed = turnSpeed;
+        if (photonView.IsMine)
+        {
+            fogAgent.enabled = false;
+            FindFirstObjectByType<csFogWar>().AddFogRevealer(fogRevealer);
+        }
+        else
+        {
+            lineRenderer.enabled = false;
+        }
         foreach (OrderBase order in orderScripts)
         {
             order.enabled = false;
@@ -60,14 +82,14 @@ public abstract class BaseUnit : MonoBehaviourPun, ISelectable, IDestroyable
             lineRenderer = GetComponentInChildren<LineRenderer>();
         }
 
-        Vector3 randomPos = Vector3.zero + (Random.insideUnitSphere * 5f);
-        randomPos.y = 2;
-        
-        transform.position = randomPos;
 
         if (photonView.IsMine)
         {
-            GetComponent<MeshRenderer>().material.color = Color.green;
+            GetComponentInChildren<MeshRenderer>().material.color = Color.green;
+        }
+        else
+        {
+            GetComponentInChildren<MeshRenderer>().material.color = Color.red;
         }
         
         while (manager == null)
@@ -89,7 +111,6 @@ public abstract class BaseUnit : MonoBehaviourPun, ISelectable, IDestroyable
     protected virtual void Update()
     {
         
-        icon.transform.forward = -Camera.main.transform.position;
         lineRenderer.SetPosition(0, transform.position);
         // if (GetComponent<OrderBase>() != null && ordersList.Count == 0)
         // {
@@ -164,7 +185,7 @@ public abstract class BaseUnit : MonoBehaviourPun, ISelectable, IDestroyable
 
     protected virtual void OnDeath()
     {
-        
+        Destroy(gameObject);
     }
 
     protected void StateMachine()

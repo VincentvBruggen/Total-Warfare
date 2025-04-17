@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9bd2731bf8252a8448af999effae9f23
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 112000000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179482
+  packageName: Strategy Camera Lite
+  packageVersion: 1.0.1
+  assetPath: Assets/StrategyCameraLite/Example/Scenes/SampleScene/LightingData.asset
+  uploadId: 708095

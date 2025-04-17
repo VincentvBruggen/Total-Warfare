@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 734d465ba8623f743bcb9955af429e39
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179482
+  packageName: Strategy Camera Lite
+  packageVersion: 1.0.1
+  assetPath: Assets/StrategyCameraLite/Example/Scenes/Materials/Red.mat
+  uploadId: 708095

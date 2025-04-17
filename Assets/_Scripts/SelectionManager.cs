@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
+using TotalWarfare;
 using Unity.Behavior;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -33,6 +34,10 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
 
     private void Start()
     {
+        if (!photonView.IsMine)
+        {
+            gameObject.SetActive(false);
+        }
         foreach (Button button in UIManager.Instance.orderButtons)
         {
             button.onClick.AddListener((UnityAction)Delegate.CreateDelegate(typeof(UnityAction), this, button.name + "Order")); // credit to Programmer on StackOverflow
@@ -113,22 +118,34 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
     public void OnSelect(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
+        if(!GameManager.instance.isGameStarted){ return;}
 
         if (currentBuilding != null && buildingIsPlacable)
         {
+            BuildingBase buildingBase = currentBuilding.GetComponent<BuildingBase>();
+            
             foreach (GameObject selectedUnit in selectedUnits)
             {
                 BaseUnit unit = selectedUnit.GetComponent<BaseUnit>();
                 targetPosition = currentBuilding.transform.position;
                 SendingOrder(currentOrder, unit);
+                
+                buildingBase.assignedUnits.Add(unit.gameObject);
             }
             currentBuilding.GetComponentInChildren<Collider>().isTrigger = false;
             currentBuilding.transform.GetChild(0).gameObject.layer = LayerMask.NameToLayer("Default");
-            currentBuilding = null;
-            
-            // if(!Keyboard.current.shiftKey.IsPressed())
+
+            if (Keyboard.current.shiftKey.IsPressed())
+            {
+                string buildingName = currentBuilding.name;
+                string[] splitName = buildingName.Split("(Clone)");
+                currentBuilding = null;
+                currentBuilding = PhotonNetwork.Instantiate("BuildingPrefabs/" + splitName[0], targetPosition, Quaternion.identity);
+                return;
+            }
                 
-            
+            buildingBase.isPlaced = true;
+            currentBuilding = null;
             return;
         }
 
@@ -152,15 +169,33 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
             }
 
             GameObject selectedUnit = hit.collider.gameObject;
-            if (!selectedUnits.Contains(selectedUnit))
+
+            if (Keyboard.current.shiftKey.IsPressed())
             {
-                selectedUnits.Add(selectedUnit);
-                selectable.OnSelect(gameObject);
+                if (!selectedUnits.Contains(selectedUnit))
+                {
+                    selectedUnits.Add(selectedUnit);
+                    selectable.OnSelect(gameObject);
+                }
+                else
+                {
+                    selectedUnits.Remove(selectedUnit);
+                    selectable.OnDeselect(gameObject);
+                }
             }
             else
             {
-                selectedUnits.Remove(selectedUnit);
-                selectable.OnDeselect(gameObject);
+                foreach (GameObject unit in selectedUnits)
+                {
+                    unit.GetComponent<ISelectable>().OnDeselect(gameObject);
+                }
+                
+                selectedUnits.Clear();
+                if (!selectedUnits.Contains(selectedUnit))
+                {
+                    selectedUnits.Add(selectedUnit);
+                    selectable.OnSelect(gameObject);
+                }
             }
         }
     }
@@ -170,6 +205,7 @@ public class SelectionManager : MonoBehaviourPun, PlayerInputs.IGameplayActions
     public void OnOverrideOrder(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
+        if(!GameManager.instance.isGameStarted){ return;}
         
         // 1. geen order -> move order
         // 2. move order -> move order

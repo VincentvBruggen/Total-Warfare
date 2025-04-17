@@ -13,7 +13,7 @@ public class BuildOrder : OrderBase
     private float buildRange = 0;
 
     private bool isBuilding = false;
-    
+    private BuildingBase buildingBase;
     protected override void Awake()
     {
         orderState = UnitState.Build;
@@ -53,7 +53,14 @@ public class BuildOrder : OrderBase
 
     protected override void Update()
     {
-
+        if (status == Node.Status.Success)
+        {
+            if (buildingBase != null)
+            {
+                buildingBase.assignedUnits.Remove(gameObject);
+            }
+        }
+        
         if (commander == null && !isBuilding)
         {
             if (Vector3.Distance(transform.position, targetPosition) < constructionUnit.buildRange)
@@ -78,16 +85,24 @@ public class BuildOrder : OrderBase
 
     private IEnumerator Build()
     {
-        isBuilding = true;
-        
-        Debug.DrawRay(transform.position, targetPosition-transform.position, Color.red);
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, targetPosition - transform.position, out hit, buildRange + 0.75f))
+        
+        if (Physics.Raycast(transform.position, targetPosition - transform.position, out hit, buildRange + 0.75f, LayerMask.GetMask("Buildings")))
         {
-            BuildingBase buildingBase = hit.transform.parent.GetComponent<BuildingBase>();
+            Debug.Log("Hit: " + hit.transform.name);
+
+            buildingBase = hit.transform.parent.GetComponent<BuildingBase>();
+            
             if (buildingBase != null)
             {
-                Debug.Log("Building: " + buildingBase.name);
+                
+                Debug.Log("Buidling!: " + buildingBase.name);
+                isBuilding = true;
+                if (!buildingBase.assignedUnits.Contains(gameObject))
+                {
+                    buildingBase.assignedUnits.Add(gameObject);
+                }
+                
                 while (buildingBase.buildProgress < buildingBase.metalCost)
                 {
                     buildingBase.buildProgress += buildSpeed * Time.deltaTime;
@@ -96,8 +111,12 @@ public class BuildOrder : OrderBase
 
                 status = Node.Status.Success;
             }
+            
+            else
+            {
+                yield return null;
+            }
         }
-        
         yield return null;
     }
 }
